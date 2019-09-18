@@ -5,16 +5,25 @@ import './sign-in.styles.scss'
 import FormInput from '../form-input/form-input.component'
 import CustomButton from '../custom-button/custom-button.component'
 
+import {signInWithGoogle, auth} from '../../firebase/firebease.utils'
+
 class SignIn extends Component {
   state = {
     email: '',
     password: ''
   }
 
-  handleSubmit = e => {
+  handleSubmit = async e => {
     e.preventDefault();
 
-    this.setState({email: '', password: ''})
+    const { email, password } = this.state;
+
+    try {
+      await auth.signInWithEmailAndPassword(email, password);
+      this.setState({email: '', password: ''})
+    } catch (err) {
+      console.log(err);
+    }
   }
 
   handleChange = e => {
@@ -33,9 +42,11 @@ class SignIn extends Component {
             handleChange={this.handleChange} label="email" />
           <FormInput type="password" value={this.state.password} name='password'
             handleChange={this.handleChange} label="password" />
-          <CustomButton type="submit">submit</CustomButton>
+          <div className="buttons">
+            <CustomButton type="submit">submit</CustomButton>
+            <CustomButton isGoogleSignIn onClick={signInWithGoogle}>sign in with g</CustomButton>
+          </div>
         </form>
-
       </div>
     )
   }
